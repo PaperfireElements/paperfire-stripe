@@ -1,0 +1,36 @@
+<link rel="import" href="../polymer/polymer-element.html">
+
+<dom-module id="paperfire-stripe">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <h2>Hello [[prop1]]!</h2>
+  </template>
+
+  <script>
+    /**
+     * `paperfire-stripe`
+     * A stripe payment element
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class PaperfireStripe extends Polymer.Element {
+      static get is() { return 'paperfire-stripe'; }
+      static get properties() {
+        return {
+          prop1: {
+            type: String,
+            value: 'paperfire-stripe'
+          }
+        };
+      }
+    }
+
+    window.customElements.define(PaperfireStripe.is, PaperfireStripe);
+  </script>
+</dom-module>
