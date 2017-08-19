@@ -1,13 +1,16 @@
 <link rel="import" href="../polymer/polymer-element.html">
+<script src="https://checkout.stripe.com/checkout.js"></script>
 
 <dom-module id="paperfire-stripe">
   <template>
     <style>
-      :host {
+       :host {
         display: block;
       }
     </style>
-    <h2>Hello [[prop1]]!</h2>
+
+    <div hidden$="[[!debug]]">[[amount]]</div>
+
   </template>
 
   <script>
@@ -20,14 +23,144 @@
      * @demo demo/index.html
      */
     class PaperfireStripe extends Polymer.Element {
-      static get is() { return 'paperfire-stripe'; }
+      static get is() {
+        return 'paperfire-stripe';
+      }
       static get properties() {
         return {
-          prop1: {
+          // Amount to charge
+          amount: {
+            type: Number,
+            value: 2000,
+            notify: true
+          },
+          // Debug the element with console logs
+          debug: Boolean,
+          // Description of Product
+          description: {
             type: String,
-            value: 'paperfire-stripe'
-          }
+            value: '2 widgets'
+          },
+          // Stripe Error
+          error: {
+            type: Boolean,
+            value: false
+          },
+          // Stripe Error messge
+          errorMessage: String,
+          // URL to location in firebase you want the response from stripe to be pushed
+          firebaseUrl: {
+            type: String,
+            readOnly: true
+          },
+          // Image Url
+          image: {
+            type: String,
+            value: 'https://stripe.com/img/documentation/checkout/marketplace.png'
+          },
+          // locale of currency
+          locale: {
+            type: String,
+            value: 'auto'
+          },
+          // Name of Product
+          name: {
+            type: String,
+            value: 'Demo Site'
+          },
+          // Stripe publishable key
+          pubKey: {
+            type: String,
+            value: 'pk_test_cFFLoJDZyUywNYKILAAndl3d'
+          },
+          
+          // Stripe Checkout object
+          _checkout: {
+            type: Object,
+            notify: true
+          },
+          // Firebase ref
+          _ref: Object
         };
+      }
+
+      ready() {
+        super.ready();
+        if (this.firebaseUrl && firebase) {
+          this._ref = firebase.database().ref(this.firebaseUrl);
+        }
+        if (!this.pubKey) {
+          console.error('Error: No stripe publishable key found');
+        } else {
+           this._initCheckout();
+            this.addEventListener('popstate', () => this._checkout.close());
+        }
+
+        window.addEventListener('paperfire-stripe-checkout', () => this.handleCheckout());
+      }
+
+      disconnectedCallback() {
+        super.disconnectedCallback();
+        if (this._ref) {
+          this._ref.off();
+        }
+        window.removeEventListener('paperfire-stripe-checkout');
+      }
+
+      handleCheckout() {
+        if (this.debug) {
+          console.log('PAPERFIRE_STRIPE:checkout opened');
+        }
+        // this._initCheckout();
+        this._checkout.open({
+          name: this.name,
+          description: this.description,
+          amount: this.amount
+        });
+      }
+
+      _initCheckout() {
+        const vm = this;
+        if (this.debug) {
+          console.info('<paperfire-stripe>', {
+            amount: this.amount,
+            pubKey: this.pubKey,
+            name: this.name,
+            description: this.description,
+            firebaseUrl: this.firebaseUrl,
+            image: this.image,
+            locale: this.locale
+          });
+        }
+        this.set('_checkout', StripeCheckout.configure({
+            key: this.pubKey,
+            image: this.image,
+            locale: this.locale,
+            token: (token) => {
+              if (vm.debug) {
+                console.log('PAPERFIRE_STRIPE:token', token);
+              }
+              vm.dispatchEvent(new CustomEvent('paperfire-stripe-token', {
+                detail: token,
+                bubbles: true,
+                composed: true
+              }));
+              if (this._ref) {
+                this._ref.push(token).then(() => {
+                  if (vm.debug) {
+                    console.log('PAPERFIRE_STRIPE:push success');
+                  }
+                  vm.dispatchEvent(new CustomEvent('paperfire-stripe-pushed', {
+                    detail: token,
+                    bubbles: true,
+                    composed: true
+                  }));
+                }).catch(err => {
+                  console.error('PAPERFIRE_STRIPE:firebase push error', err);
+                });
+              }
+            }
+          }));
       }
     }
 
