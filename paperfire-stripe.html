@@ -28,11 +28,26 @@
       }
       static get properties() {
         return {
+          // Allow Remember me in form
+          allowRememberMe: {
+            type: Boolean,
+            value: true
+          },
           // Amount to charge
           amount: {
             type: Number,
             value: 2000,
             notify: true
+          },
+          // Collect billing address
+          billingAddress: {
+            type: Boolean,
+            value: false
+          },
+          // Allow pay with bitcoin
+          bitcoin: {
+            type: Boolean,
+            value: false
           },
           // currency
           currency: {
@@ -46,6 +61,8 @@
             type: String,
             value: '2 widgets'
           },
+          // Prefill Email
+          email: String,
           // Stripe Error
           error: {
             type: Boolean,
@@ -83,6 +100,12 @@
           shippingAddress: {
             type: Boolean,
             value: false
+          },
+
+          // Collect zip code for verification
+          zipCode: {
+            type: Boolean,
+            value: true
           },
           // Stripe Checkout object
           _checkout: {
@@ -133,23 +156,34 @@
         const vm = this;
         if (this.debug) {
           console.info('<paperfire-stripe>', {
+            allowRememberMe: this.allowRememberMe,
             amount: this.amount,
+            billingAddress: this.billingAddress,
+            bitcoin: this.bitcoin,
             currency: this.currency,
-            pubKey: this.pubKey,
-            name: this.name,
             description: this.description,
+            email: this.email,
             firebaseUrl: this.firebaseUrl,
             image: this.image,
             locale: this.locale,
-            shippingAddress: this.shippingAddress
+            name: this.name,
+            pubKey: this.pubKey,
+            shippingAddress: this.shippingAddress,
+            zipCode: this.zipCode
           });
         }
         this.set('_checkout', StripeCheckout.configure({
+            allowRememberMe: this.allowRememberMe,
+            currency: this.currency,
+            billingAddress: this.billingAddress,
+            bitcoin: this.bitcoin,
+            email: this.email ? this.email : null,
             key: this.pubKey,
             image: this.image,
             currency: this.currency,
             shippingAddress: this.shippingAddress,
             locale: this.locale,
+            zipCode: this.zipCode,
             token: (token) => {
               if (vm.debug) {
                 console.log('PAPERFIRE_STRIPE:token', token);
