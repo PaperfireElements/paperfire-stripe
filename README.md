@@ -3,6 +3,10 @@
 
 A stripe payment element
 
+## This element is in early development
+
+This is a pretty simple wrapper for the Stripe Checkout flow, so it should be ready to use. But I haven't done any rigorous testing yet so please handle with care. Thanks :)
+
 ## Demo
 <!--
 ```

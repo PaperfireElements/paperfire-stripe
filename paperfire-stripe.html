@@ -34,6 +34,11 @@
             value: 2000,
             notify: true
           },
+          // currency
+          currency: {
+            type: String,
+            value: 'USD'
+          },
           // Debug the element with console logs
           debug: Boolean,
           // Description of Product
@@ -73,7 +78,12 @@
             type: String,
             value: 'pk_test_cFFLoJDZyUywNYKILAAndl3d'
           },
-          
+
+          // Collect Shipping Address
+          shippingAddress: {
+            type: Boolean,
+            value: false
+          },
           // Stripe Checkout object
           _checkout: {
             type: Object,
@@ -124,17 +134,21 @@
         if (this.debug) {
           console.info('<paperfire-stripe>', {
             amount: this.amount,
+            currency: this.currency,
             pubKey: this.pubKey,
             name: this.name,
             description: this.description,
             firebaseUrl: this.firebaseUrl,
             image: this.image,
-            locale: this.locale
+            locale: this.locale,
+            shippingAddress: this.shippingAddress
           });
         }
         this.set('_checkout', StripeCheckout.configure({
             key: this.pubKey,
             image: this.image,
+            currency: this.currency,
+            shippingAddress: this.shippingAddress,
             locale: this.locale,
             token: (token) => {
               if (vm.debug) {
