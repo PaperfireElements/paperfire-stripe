@@ -1,30 +1,46 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
-    <title>paperfire-stripe demo</title>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
-    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <title>paperfire-stripe demo</title>
 
-    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
-    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
-    <link rel="import" href="../paperfire-stripe.html">
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
 
-    <custom-style>
-      <style is="custom-style" include="demo-pages-shared-styles">
-      </style>
-    </custom-style>
-  </head>
-  <body>
-    <div class="vertical-section-container centered">
-      <h3>Basic paperfire-stripe demo</h3>
-      <demo-snippet>
-        <template>
-          <paperfire-stripe></paperfire-stripe>
-        </template>
-      </demo-snippet>
-    </div>
-  </body>
+  <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+  <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+  <link rel="import" href="../../paper-button/paper-button.html">
+  <link rel="import" href="../paperfire-stripe.html">
+
+  <custom-style>
+    <style is="custom-style" include="demo-pages-shared-styles">
+
+    </style>
+  </custom-style>
+</head>
+
+<body>
+  <div class="vertical-section-container centered">
+    <h3>Basic paperfire-stripe demo</h3>
+    <demo-snippet>
+      <template>
+
+        <paper-button id="checkoutBtn" raised>Checkout</paper-button>
+
+        <paperfire-stripe amount="2000"></paperfire-stripe>
+      </template>
+      <script>
+        document.getElementById('checkoutBtn').addEventListener('click', function () {
+          this.dispatchEvent(new CustomEvent('paperfire-stripe-checkout', {
+            bubbles: true,
+            composed: true
+          }));
+        })
+      </script>
+    </demo-snippet>
+  </div>
+</body>
+
 </html>
