@@ -10,10 +10,17 @@ A stripe payment element
   <template>
     <link rel="import" href="paperfire-stripe.html">
     <link rel="import" href="../paper-button/paper-button.html">
-    <paper-button id="checkoutBtn" raised>Checkout</paper-button>
     <next-code-block></next-code-block>
   </template>
-  <script>
+  
+</custom-element-demo>
+```
+-->
+```html
+
+<paper-button id="checkoutBtn" raised>Checkout</paper-button>
+<paperfire-stripe amount="100000000" name="paperfire-stripe demo" description="Something really cool"></paperfire-stripe>
+<script>
     document.getElementById('checkoutBtn').addEventListener('click', function () {
           this.dispatchEvent(new CustomEvent('paperfire-stripe-checkout', {
             bubbles: true,
@@ -21,11 +28,6 @@ A stripe payment element
           }));
         });
     </script>
-</custom-element-demo>
-```
--->
-```html
-<paperfire-stripe amount="100000000" name="paperfire-stripe demo" description="Something really cool"></paperfire-stripe>
 ```
 
 ## Usage
