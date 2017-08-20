@@ -17,40 +17,40 @@
       }
       static get properties() {
         return {
-          // Allow Remember me in form
+          // Specify whether to include the option to "Remember Me" for future purchases (true or false). The default is true. This feature is dependent on being able to set cookies or use the browser’s localStorage, and may not be available if your customer has certain privacy settings enabled.
           allowRememberMe: {
             type: Boolean,
             value: true
           },
-          // Amount to charge
+          // The amount (in pence) that's shown to the user. (You will also need to provide Checkout with a currency value to change the default of USD.)
           amount: {
             type: Number,
             value: 2000,
             notify: true
           },
-          // Collect billing address
+          // Specify whether Checkout should collect the user's billing address (true or false).
           billingAddress: {
             type: Boolean,
             value: false
           },
-          // Allow pay with bitcoin
+          // Specify whether to accept Bitcoin (true or false).
           bitcoin: {
             type: Boolean,
             value: false
           },
-          // currency
+          // The currency of the amount (3-letter ISO code). The default is USD.
           currency: {
             type: String,
             value: 'USD'
           },
           // Debug the element with console logs
           debug: Boolean,
-          // Description of Product
+          // A description of the product or service being purchased
           description: {
             type: String,
             value: '2 widgets'
           },
-          // Prefill Email
+          // If you already know the email address of your user, you can provide it to Checkout to be prefilled.
           email: String,
           // Stripe Error
           error: {
@@ -64,34 +64,34 @@
             type: String,
             readOnly: true
           },
-          // Image Url
+          // Image Url: A relative or absolute URL pointing to a square image of your brand or product. The recommended minimum size is 128x128px. The supported image types are: .gif, .jpeg, and .png.
           image: {
             type: String,
             value: 'https://stripe.com/img/documentation/checkout/marketplace.png'
           },
-          // locale of currency
+          // Specify *auto* to display Checkout in the user's preferred language, if available. English will be used by default.
           locale: {
             type: String,
             value: 'auto'
           },
-          // Name of Product
+          // The name of your company or website
           name: {
             type: String,
             value: 'Demo Site'
           },
-          // Stripe publishable key
+          // Stripe publishable (test or live)
           pubKey: {
             type: String,
             value: 'pk_test_6pRNASCoBOKtIshFeQd4XMUh'
           },
 
-          // Collect Shipping Address
+          // Specify whether Checkout should collect the user's shipping address (true or false).
           shippingAddress: {
             type: Boolean,
             value: false
           },
 
-          // Collect zip code for verification
+          // Specify whether Checkout should validate the billing postal code (true or false). Stripe highly recommends enabling declines on verification failures in your <a href="https://dashboard.stripe.com/account">account settings</a>.
           zipCode: {
             type: Boolean,
             value: true
