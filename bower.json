@@ -13,5 +13,12 @@
   },
   "resolutions": {
     "polymer": "^2.0.0"
-  }
+  },
+  "keywords": [
+    "webcomponents",
+    "payments",
+    "stripe",
+    "checkout",
+    "polymer"
+  ]
 }

@@ -21,7 +21,8 @@ This is a pretty simple wrapper for the Stripe Checkout flow, so it should be re
 ```
 -->
 ```html
-
+<div style="height: 200px;"></div>
+<span>cost: $1,000,000</span>
 <paper-button id="checkoutBtn" raised>Checkout</paper-button>
 <paperfire-stripe amount="100000000" name="paperfire-stripe demo" description="Something really cool"></paperfire-stripe>
 <script>
