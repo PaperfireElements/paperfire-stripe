@@ -84,13 +84,11 @@
             type: String,
             value: 'pk_test_6pRNASCoBOKtIshFeQd4XMUh'
           },
-
           // Specify whether Checkout should collect the user's shipping address (true or false).
           shippingAddress: {
             type: Boolean,
             value: false
           },
-
           // Specify whether Checkout should validate the billing postal code (true or false). Stripe highly recommends enabling declines on verification failures in your <a href="https://dashboard.stripe.com/account">account settings</a>.
           zipCode: {
             type: Boolean,
@@ -114,8 +112,8 @@
         if (!this.pubKey) {
           console.error('Error: No stripe publishable key found');
         } else {
-           this._initCheckout();
-            this.addEventListener('popstate', () => this._checkout.close());
+          this._initCheckout();
+          this.addEventListener('popstate', () => this._checkout.close());
         }
 
         window.addEventListener('paperfire-stripe-checkout', () => this.handleCheckout());
@@ -162,42 +160,53 @@
           });
         }
         this.set('_checkout', StripeCheckout.configure({
-            allowRememberMe: this.allowRememberMe,
-            currency: this.currency,
-            billingAddress: this.billingAddress,
-            bitcoin: this.bitcoin,
-            email: this.email ? this.email : null,
-            key: this.pubKey,
-            image: this.image,
-            currency: this.currency,
-            shippingAddress: this.shippingAddress,
-            locale: this.locale,
-            zipCode: this.zipCode,
-            token: (token) => {
-              if (vm.debug) {
-                console.log('PAPERFIRE_STRIPE:token', token);
-              }
-              vm.dispatchEvent(new CustomEvent('paperfire-stripe-token', {
-                detail: token,
-                bubbles: true,
-                composed: true
-              }));
-              if (this._ref) {
-                this._ref.push(token).then(() => {
-                  if (vm.debug) {
-                    console.log('PAPERFIRE_STRIPE:push success');
-                  }
-                  vm.dispatchEvent(new CustomEvent('paperfire-stripe-pushed', {
-                    detail: token,
-                    bubbles: true,
-                    composed: true
-                  }));
-                }).catch(err => {
-                  console.error('PAPERFIRE_STRIPE:firebase push error', err);
-                });
-              }
+          allowRememberMe: this.allowRememberMe,
+          currency: this.currency,
+          billingAddress: this.billingAddress,
+          bitcoin: this.bitcoin,
+          email: this.email ? this.email : null,
+          key: this.pubKey,
+          image: this.image,
+          currency: this.currency,
+          shippingAddress: this.shippingAddress,
+          locale: this.locale,
+          zipCode: this.zipCode,
+          token: (token) => {
+            if (vm.debug) {
+              console.log('PAPERFIRE_STRIPE:token', token);
             }
-          }));
+            /**
+             * Fired when `paperfire-stripe` receives the Stripe response.
+             *
+             * @event paperfire-stripe-token
+             * @param {object} token The stripe response. Access the transaction token with token.id.
+             */
+            vm.dispatchEvent(new CustomEvent('paperfire-stripe-token', {
+              detail: token,
+              bubbles: true,
+              composed: true
+            }));
+            if (this._ref) {
+              this._ref.push(token).then(() => {
+                if (vm.debug) {
+                  console.log('PAPERFIRE_STRIPE:push success');
+                }
+                /**
+                 * Fired when `paperfire-stripe` pushes the stripe response to firebase.
+                 *
+                 * @event paperfire-stripe-pushed
+                 */
+                vm.dispatchEvent(new CustomEvent('paperfire-stripe-pushed', {
+                  detail: token,
+                  bubbles: true,
+                  composed: true
+                }));
+              }).catch(err => {
+                console.error('PAPERFIRE_STRIPE:firebase push error', err);
+              });
+            }
+          }
+        }));
       }
     }
 
