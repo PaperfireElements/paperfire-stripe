@@ -97,52 +97,65 @@
           // Stripe Checkout object
           _checkout: {
             type: Object,
-            notify: true
+            computed: '_initCheckout(pubKey)'
           },
           // Firebase ref
-          _ref: Object
+          _ref: {
+            type: Object,
+            computed: '_createRef(firebaseUrl)'
+          }
         };
       }
 
       ready() {
         super.ready();
-        if (this.firebaseUrl && firebase) {
-          this._ref = firebase.database().ref(this.firebaseUrl);
-        }
-        if (!this.pubKey) {
-          console.error('Error: No stripe publishable key found');
-        } else {
-          this._initCheckout();
-          this.addEventListener('popstate', () => this._checkout.close());
-        }
-
-        window.addEventListener('paperfire-stripe-checkout', () => this.handleCheckout());
+        this.addEventListener('popstate', () => this._checkout.close());
+        window.addEventListener('paperfire-stripe-checkout', (e) => this.open(e.detail));
       }
 
       disconnectedCallback() {
         super.disconnectedCallback();
-        if (this._ref) {
-          this._ref.off();
-        }
         window.removeEventListener('paperfire-stripe-checkout');
       }
 
-      handleCheckout() {
+      open(passedConfig) {
+        if (!this.pubKey) {
+          console.error('Error: No stripe publishable key found');
+          return;
+        }
         if (this.debug) {
           console.log('PAPERFIRE_STRIPE:checkout opened');
         }
-        // this._initCheckout();
-        this._checkout.open({
-          name: this.name,
+
+        let config = {
+          amount: this.amount,
+          billingAddress: this.billingAddress,
           description: this.description,
-          amount: this.amount
-        });
+          image: this.image,
+          key: this.pubKey,
+          locale: this.locale,
+          name: this.name,
+          zipCode: this.zipCode,
+        };
+        if (this.email) {
+          config['email'] = this.email;
+        }
+
+        this._checkout.open(Object.assign({}, config, passedConfig));
       }
 
-      _initCheckout() {
+      _createRef(url) {
+        if (url && firebase) {
+          return firebase.database().ref(url);
+        } else {
+          console.error('PAPERFIRE_STRIPE: cannot access firebase');
+        }
+      }
+
+      _initCheckout(pubKey) {
         const vm = this;
         if (this.debug) {
-          console.info('<paperfire-stripe>', {
+          console.info('init: <paperfire-stripe>', {
             allowRememberMe: this.allowRememberMe,
             amount: this.amount,
             billingAddress: this.billingAddress,
@@ -154,18 +167,17 @@
             image: this.image,
             locale: this.locale,
             name: this.name,
-            pubKey: this.pubKey,
+            pubKey: pubKey,
             shippingAddress: this.shippingAddress,
             zipCode: this.zipCode
           });
         }
-        this.set('_checkout', StripeCheckout.configure({
+        return StripeCheckout.configure({
           allowRememberMe: this.allowRememberMe,
           currency: this.currency,
-          billingAddress: this.billingAddress,
+          billingAddress: this.billingAddress || this.shippingAddress,
           bitcoin: this.bitcoin,
-          email: this.email ? this.email : null,
-          key: this.pubKey,
+          key: pubKey,
           image: this.image,
           currency: this.currency,
           shippingAddress: this.shippingAddress,
@@ -186,8 +198,8 @@
               bubbles: true,
               composed: true
             }));
-            if (this._ref) {
-              this._ref.push(token).then(() => {
+            if (vm._ref) {
+              vm._ref.push(token).then(() => {
                 if (vm.debug) {
                   console.log('PAPERFIRE_STRIPE:push success');
                 }
@@ -206,7 +218,7 @@
               });
             }
           }
-        }));
+        });
       }
     }
 
