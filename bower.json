@@ -1,5 +1,6 @@
 {
   "name": "paperfire-stripe",
+  "version": "v2.1.0",
   "description": "A stripe payment element",
   "main": "paperfire-stripe.html",
   "dependencies": {
