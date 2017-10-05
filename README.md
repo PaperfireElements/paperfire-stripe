@@ -24,7 +24,7 @@ This is a pretty simple wrapper for the Stripe Checkout flow, so it should be re
 <div style="height: 400px;"></div>
 <span>cost: $1,000,000</span>
 <paper-button id="checkoutBtn" raised>Checkout</paper-button>
-<paperfire-stripe amount="100000000" name="paperfire-stripe demo" description="Something really cool"></paperfire-stripe>
+<paperfire-stripe id="stripe" amount="100000000" name="paperfire-stripe demo" description="Something really cool"></paperfire-stripe>
 <script>
     document.getElementById('checkoutBtn').addEventListener('click', function () {
         this.dispatchEvent(
@@ -38,14 +38,33 @@ This is a pretty simple wrapper for the Stripe Checkout flow, so it should be re
 ```
 
 ## Usage
-To open Stripe Checkout you need to fire a custom event `paperfire-stripe-checkout`
+
+To open Stripe Checkout you can fire a custom event `paperfire-stripe-checkout`
 ```
     this.dispatchEvent(
         new CustomEvent('paperfire-stripe-checkout', {
           bubbles: true,
           composed: true
+          // the stripe checkout config can be passed in
+          detail: {
+              email: evasmith@smith.com,
+              amount: 10000
+          }
         })
     );
+```
+
+Or use the `open` method
+
+```
+ this.$.stripe.open();
+
+ // the stripe checkout config can be passed in
+ this.$.stripe.open({
+     email: johnsmith@smith.com
+     amount: 10000
+ });
+
 ```
 
 
